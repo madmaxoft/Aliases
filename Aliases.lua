@@ -14,6 +14,28 @@ PLUGIN_PREFIX = "Aliases: "
 
 
 
+--- Catches chat messages beginning with an alias, modifies them
+local function OnChat(a_Player, a_Message)
+	local state = GetPlayerState(a_Player)
+	
+	-- Check if there is an alias for this chat message:
+	local alias = state:FindAlias(a_Message)
+	if not(alias) then
+		-- No alias, continue executing normally:
+		return false
+	end
+	
+	-- An alias has been found, apply it and re-execute:
+	local NewMessage = alias.To .. string.sub(a_Message, string.len(alias.From) + 1)
+	return false, NewMessage
+end
+
+
+
+
+
+--- Catches commands and console commands beginning with an alias
+-- Executes the aliased commands with the rest of the given params
 local function OnExecuteCommand(a_Player, a_Split, a_EntireCommand)
 	local state = GetPlayerState(a_Player)
 	
@@ -60,8 +82,13 @@ function Initialize(a_Plugin)
 	dofile(cPluginManager:GetPluginsPath() .. "/InfoReg.lua")
 	RegisterPluginInfoCommands()
 	RegisterPluginInfoConsoleCommands()
-	
+
+	cPluginManager:AddHook(cPluginManager.HOOK_CHAT,             OnChat)
 	cPluginManager:AddHook(cPluginManager.HOOK_EXECUTE_COMMAND,  OnExecuteCommand)
 	cPluginManager:AddHook(cPluginManager.HOOK_PLAYER_DESTROYED, OnPlayerDestroyed)
 	return true
 end
+
+
+
+

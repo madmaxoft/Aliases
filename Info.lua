@@ -11,6 +11,7 @@ g_PluginInfo =
 {
 	Name = "Aliases",
 	Date = "2015-05-10",
+	Description = "Allows players to define aliases for in-game commands and even chat messages. Server admins can define their aliases for console commands.",
 	
 	Commands =
 	{

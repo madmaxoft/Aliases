@@ -57,6 +57,35 @@ end
 
 
 
+--- Removes an alias, based on the "From" in the a_CommandParams string
+-- Returns true or false indicating success, and a message
+function g_PlayerStateTemplate:RemoveAlias(a_CommandParams)
+	-- Check params:
+	assert(type(a_CommandParams) == "string")
+	
+	-- Parse the command parameters:
+	local Split = StringSplitWithQuotes(a_CommandParams, " ")
+	if (#Split ~= 1) then
+		return false, "You need to provide exactly one parameters, enclosed in doublequotes."
+	end
+	local From = Split[1]
+	
+	-- Search for the alias, remove it if found:
+	for idx, alias in ipairs(self.Aliases) do
+		if (alias.From == From) then
+			table.remove(self.Aliases, idx)
+			g_DB:RemoveAlias(alias)
+			return true, "Alias removed"
+		end
+	end
+	
+	return false, "Alias not found"
+end
+
+
+
+
+
 --- Sets an alias, based on the command parameters in the a_CommandParams string
 -- Returns true if successful, false and message on failure
 function g_PlayerStateTemplate:SetAlias(a_CommandParams)
@@ -93,7 +122,7 @@ function g_PlayerStateTemplate:SetAlias(a_CommandParams)
 	table.insert(self.Aliases, NewAlias)
 	g_DB:InsertAlias(NewAlias)
 	
-	return true
+	return true, "Alias has been set"
 end
 
 

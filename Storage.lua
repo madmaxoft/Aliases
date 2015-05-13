@@ -205,6 +205,26 @@ end
 
 
 
+--- Removes the specified alias from the database
+-- Returns true on success, false and error message on failure
+function g_DB:RemoveAlias(a_Alias)
+	-- Check params:
+	assert(self)
+	assert(type(a_Alias) == "table")
+	
+	return self:ExecuteStatement(
+		"DELETE FROM Aliases WHERE PlayerName = ? and AliasFrom = ?",
+		{
+			a_Alias.PlayerName,
+			a_Alias.From
+		}
+	)
+end
+
+
+
+
+
 function InitializeStorage()
 	-- Open the DB:
 	local DBFile = "Aliases.sqlite"
